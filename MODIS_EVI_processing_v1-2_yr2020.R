@@ -5,9 +5,10 @@
 # install.packages("readr")
 # install.packages("ggplot2")
 # install.packages("tidyverse")
-##
+
+## J Musinsky 2020
 ## Script for processing smoothed EVI 8-day composite time series from high-quality (QA-bit=0) MODIS Terra and Aqua data 
-## produced from Earth Engine script "Mean 2003-2019 MODIS VIIRS EVI per Site - JM v4B" 
+## produced from Earth Engine JavaScript "Mean 2003-2019 MODIS VIIRS EVI per Site - JM v4B" 
 ## Input CSV table must contain three columns of data in following format: 
 ##
 ## system:index	date	      mean

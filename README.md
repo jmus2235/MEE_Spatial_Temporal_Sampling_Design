@@ -1,6 +1,7 @@
-# Phenology-from-Satellite-Data (R, JavaScript)
+# Phenology-Cloud-Fractions-from-Satellite-Data (R, JavaScript, Python)
 1) MODIS and VIIRS phenology and phenophase transition date estimation code
 2) MODIS cloud fraction estimation code 
+3) Monte Carlo simulation code to determine cloud-free probabilities
 
 
 

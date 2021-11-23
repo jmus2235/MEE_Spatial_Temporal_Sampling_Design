@@ -1,10 +1,11 @@
+// Modified from sample GEE script - J Musinsky 2020
 // Script that calculates number of cloudy MODIS pixels for each day within an ROI. 
-// This is a beta script that produces a table requiring significant manual re-processing in Excel.
+// This script  produces a table requiring significant manual re-processing in Excel.
 // Final table appears in the following format, which is then meant to be input into a pivot table:
 // YEAR	MONTH	DAY	GROUP 0	COUNT 0	GROUP 1	COUNT 1	TOTAL	CLOUD FREE FRACTION	GREATER THAN 90% CLOUD FREE
 // 2002	1	    1	        0	   1227	      1	     21	 1248	        0.983173077	                          1
-// 2002	1	    2	        0	   1248			               1248	                  1	                          1
-// 2002	1	    3	        0	   1248			               1248	                  1                          	1
+// 2002	1	    2	        0	   1248			         1248	                  1	                          1
+// 2002	1	    3	        0	   1248			         1248	                  1                         	1
 // ...
 
 // Modis Cloud Masking 
@@ -17,43 +18,43 @@
  * A function that returns an image containing just the specified QA bits.
  *
  * Args:
- *   image - The QA Image to get bits from.
- *   start - The first bit position, 0-based.
- *   end   - The last bit position, inclusive.
- *   name  - A name for the output image.
+ *   image - The QA Image to get bits from
+ *   start - The first bit position, 0-based
+ *   end   - The last bit position, inclusive
+ *   name  - A name for the output image
  
 */ 
 var getQABits = function(image, start, end, newName) {
-    // Compute the bits we need to extract.
+    // Compute the bits to extract
     var pattern = 0;
     for (var i = start; i <= end; i++) {
        pattern += Math.pow(2, i);
     }
     // Return a single band image of the extracted QA bits, giving the band
-    // a new name.
+    // a new name
     return image.select([0], [newName])
                   .bitwiseAnd(pattern)
                   .rightShift(start);
 };
 
-// A function to mask out pixels that did not have observations.
+// A function to mask out pixels that did not have observations
 var maskEmptyPixels = function(image) {
 
-// Find pixels that had observations.
+// Find pixels with observations
   var withObs = image.select('num_observations_1km').gt(0);
-    //Selects bands from an image.
-    //Returns an image with the selected bands.
+    //Selects bands from an image
+    //Returns an image with the selected bands
   
   return image.updateMask(withObs); 
-    //Updates an image's mask at all positions where the existing mask is not zero. 
-    //The output image retains the metadata and footprint of the input image.
+    //Updates an image's mask at all positions where the existing mask is not zero
+    //The output image retains the metadata and footprint of the input image
 };
 
-// A function to mask out cloudy pixels.
+// A function to mask out cloudy pixels
 var maskClouds = function(image) {
-  // Select the QA band.
+  // Select the QA band
   var QA = image.select('state_1km');
-  // Get the internal_cloud_algorithm_flag bit.
+  // Get the internal_cloud_algorithm_flag bit
   var cloud = getQABits(QA, 10, 10, 'internal_cloud_algorithm_flag').neq(0).rename('cloud')
   return image.addBands(cloud)
 };
@@ -80,20 +81,6 @@ var result = cloudy.map(function(image) {
 })
 print(result)
 
-//var result2 = collection.map(function(f) { 
-//   return ee.Feature(f.geometry(), f.toDictionary().combine({count: 0, group: 0}, false)
-//})
-
-//var cloudfractions=ee.Dictionary(result);
-//print('Dictionary of fractions', result);
-
-//Export.table.toDrive(ee.FeatureCollection(result), 'SiteCloudCounts');
-
-// Make a feature without geometry and set the properties to the dictionary of results
-//var feature = ee.Feature(null, result);
-
-// Wrap the Feature in a FeatureCollection for export.
-//var featureCollection = ee.FeatureCollection([result]).flatten();
 
 //Export the feature collection
 Export.table.toDrive({
@@ -105,7 +92,7 @@ Export.table.toDrive({
 });
 
 
-// Call the MODIS reflectance data for this date (JM addition)
+// Call the MODIS reflectance data for this date - optional to simply view a MODIS image for the date specified
 var img = ee.Image('MOD09GA/MOD09GA_005_2016_09_14');
 
 //Map.addLayer(
@@ -117,6 +104,8 @@ var img = ee.Image('MOD09GA/MOD09GA_005_2016_09_14');
 // Display true color MODIS reflectance image  
 Map.addLayer(img.select(['sur_refl_b01', 'sur_refl_b04', 'sur_refl_b03']),
          {gain: '0.1, 0.1, 0.1'}, 'MODIS bands 1/4/3');
+
+// Specify a map center for the target site
 
 //Map.setCenter(-83.466381, 35.662826, 10); GRSM
 //Map.setCenter(-84.470595, 31.242996, 10); JERC
@@ -153,15 +142,9 @@ Map.addLayer(img.select(['sur_refl_b01', 'sur_refl_b04', 'sur_refl_b03']),
 //Map.setCenter(-103.042, 40.479985, 10); STER
 //Map.setCenter(-105.493606, 40.234759, 10); RMNP
 //Map.setCenter(-121.951912, 45.820488, 10); WREF
-//Map.setCenter(-122.311358, 45.762317, 10); ABBY
+Map.setCenter(-122.311358, 45.762317, 10); ABBY
 //Map.setCenter(-155.271043, 19.557675, 10); OLAA
-//Map.setCenter(-122.023675, 37.279722, 10); SCMS
-//Map.setCenter(-109.583784, 38.089812, 10); CTW1
-//Map.setCenter(-112.064353, 34.249008, 10); CTW2
-//Map.setCenter(-112.847911, 34.919718, 10); CTW3
-//Map.setCenter(-114.469337, 32.858003, 10); CTW4
-//Map.setCenter(-90.869677, 29.322723, 10); DLTX
-Map.setCenter(-72.123258, 42.519709, 10); SMAP_MA
+
 
 //Display site table 
-Map.addLayer(SMAP_MA)
+//Map.addLayer(ABBY)

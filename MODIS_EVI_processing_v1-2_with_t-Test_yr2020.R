@@ -10,9 +10,10 @@
 # install.packages("PairedData")
 #install.packages("emuR")
 
-##
+## J Musinsky 2020
 ## Script for processing smoothed EVI 8-day composite time series from high-quality (QA-bit=0) MODIS Terra and Aqua data 
-## produced from Earth Engine script "Mean 2003-2019 MODIS VIIRS EVI per Site - JM v4B" 
+## produced from Earth Engine JavaScript "Mean 2003-2019 MODIS VIIRS EVI per Site - JM v4B" 
+## Produces T-test to evaluate whether there is a significant trend in earlier/later green-up dates over time (note: EVI for DOY 17 not produced)
 ## Input CSV table must contain three columns of data in following format: 
 ##
 ## system:index	date	      mean
